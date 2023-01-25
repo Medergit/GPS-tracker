@@ -1,0 +1,39 @@
+.content{
+    display: flex;
+    flex-wrap: wrap;
+    
+}
+.content > div{
+    border: 3px solid rgb(96, 185, 74);
+    width: 32%;
+}
+input{
+    padding: 15px;
+    width: 100px;
+    background-color: coral;
+    border: 5px solid cornflowerblue;
+    border-radius: 15px;
+}
+.ques{
+    font-size: 30px;
+}
+button{
+    font-size: 15px;
+    padding: 10px;
+    background-color: yellowgreen;
+}
+
+
+.platform{
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+}
+.block{
+    border: 1px solid rgb(75, 12, 104);
+    transition: all 1s;
+}
+.block:hover{
+    background-color: cornflowerblue;
+    cursor: pointer;
+}
