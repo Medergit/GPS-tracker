@@ -54,6 +54,7 @@ function success(position){
         L.DomEvent.on(destBtn, 'click', function() {
             control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
             map.closePopup();
+            control.options.show = true
         });
         L.DomEvent.on(myLocationBtn, 'click', function() {
             control.spliceWaypoints(0, 1, [latitude, longitude]);
