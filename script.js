@@ -1,58 +1,85 @@
 
 
-const html = document.querySelector(".content")
-const num = document.querySelector("input")
-const btn = document.querySelector("button")
+
+function createButton(label, container) {
+    var btn = L.DomUtil.create('button', '', container);
+    btn.setAttribute('type', 'button');
+    btn.innerHTML = label;
+    return btn;
+}
 
 
-btn.addEventListener("click", function(){
+function success(position){
+    const { latitude, longitude } = position.coords
+
+    let map = L.map('map').setView([latitude, longitude], 14);
+
+    let titleLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    // let marker = L.marker([latitude, longitude]).addTo(map)
+
+    let control = L.Routing.control({
+        waypoints: [
+            L.latLng(latitude, longitude),
+            L.latLng(null, null)
+        ],
+        show: false,
+    // }).on('routesfound',function(e){
+    //     e.routes[0].coordinates.forEach((coordinat, index)=> {
+    //         const markerTimeout = setTimeout(()=>{
+    //             marker.setLatLng([coordinat.lat, coordinat.lng])
+    //         },200*index)
+    //     });
+    }).addTo(map)
     
-num.style.backgroundColor = "coral"
 
-    if(num.value > 0 && num.value < 101){
-        html.innerHTML = ''
+    map.on('click', function(e) {
+        var container = L.DomUtil.create('div'),
+            startBtn = createButton('Начать с этой точки', container),
+            destBtn = createButton('Идти к этой точке', container),
+            myLocationBtn = createButton('Мое местоположение', container);
+    
+        L.popup()
+            .setContent(container)
+            .setLatLng(e.latlng)
+            .openOn(map);
 
-        async function URL(){
-        const https =await fetch(`https://jsonplaceholder.typicode.com/posts?_limit=${num.value}`)
-        const posts = await https.json()
+        L.DomEvent.on(startBtn, 'click', function() {
+            control.spliceWaypoints(0, 1, e.latlng);
+            map.closePopup();
+        });
+        L.DomEvent.on(destBtn, 'click', function() {
+            control.spliceWaypoints(control.getWaypoints().length - 1, 1, e.latlng);
+            map.closePopup();
+        });
+        L.DomEvent.on(myLocationBtn, 'click', function() {
+            control.spliceWaypoints(0, 1, [latitude, longitude]);
+            map.closePopup().setView([latitude, longitude], 13);
+        });
+    });
+}
 
-        posts.map(function(newarr){
-            const div = document.createElement("div")
-                
-            div.innerHTML = `<h1>${newarr.id} ${newarr.title}</h1>
-                             <p>${newarr.body}</p>`
+const options = {
+    enableHighAccuracy: true,
+    maximumAge: 1000,
+    timeout: 3000
+}
 
-            html.append(div)
-            })
-        }
-    URL()
-
-    num.value='' 
-
-    }else{
-            num.style.backgroundColor = "red"
-    }
-})
-
-/////////////////////////////////////game/////////////////////////////////
-
-
-const platform = document.querySelector(".platform")
-const block = document.querySelectorAll(".block")
-const platformArr = Array.from(platform.children)
+function error() {
+    alert('Где ты вообще...'); // на случай ошибки
+}
 
 
-block.forEach((element, index) => {
-    element.addEventListener("click", function(){
-        element.style.backgroundColor = "cornflowerblue";
-        setTimeout(
-            function(){
-                block[index + 8].style.backgroundColor = "cornflowerblue"
-                block[index - 8].style.backgroundColor = "cornflowerblue"
-                block[index + 1].style.backgroundColor = "cornflowerblue"
-                block[index - 1].style.backgroundColor = "cornflowerblue"
-            }
-        ,500)
-    })
-});
+navigator.geolocation.getCurrentPosition(success, error, options)
 
+
+
+
+
+
+
+
+  
