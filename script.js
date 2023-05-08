@@ -26,7 +26,6 @@ function success(position){
             L.latLng(latitude, longitude),
             L.latLng(null, null)
         ],
-        show: false,
     // }).on('routesfound',function(e){
     //     e.routes[0].coordinates.forEach((coordinat, index)=> {
     //         const markerTimeout = setTimeout(()=>{
